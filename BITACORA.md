@@ -177,15 +177,56 @@ Solo hay 1 lectura directa de CONFIG["vigencia_dias"] en legado.py .py:66, pero 
 ## Etapa 3 — Abstracción y reuso
 
 **Predicción:**
-
+El "grep" da 7 lineas pero son 4 dataclasses en `modelos.py`. Las importantes del proveedor son `full_name`, `risk_level` y `attributes`. Creo que al terminar esta etapa van a quedar 0 marcas fuera de el adaptador. 
 **Observación:**
 
 ```
+# grep no existe en PowerShell; equivalente en Windows:
+# Get-ChildItem -Recurse -Path clinicasegura -Filter *.py | Select-String -Pattern 'data|attributes|full_name|risk_lvl'
+
+grep -rn 'data\|attributes\|full_name\|risk_lvl' clinicasegura/
+grep : The term 'grep' is not recognized as the name of a cmdlet, function, script file, or operable program.
+At line:1 char:1
++ grep -rn 'data\|attributes\|full_name\|risk_lvl' clinicasegura/
++ ~~~~
+    + CategoryInfo          : ObjectNotFound: (grep:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+
+Get-ChildItem -Recurse -Path clinicasegura -Filter *.py | Select-String -Pattern 'data|attributes|full_name|risk_lvl'
+
+clinicasegura\legado.py:125:                    data=json.dumps(cuerpo).encode("utf-8"),
+clinicasegura\legado.py:150:            paciente["data"]["attributes"]["full_name"],
+clinicasegura\legado.py:151:            paciente["data"]["attributes"]["risk_lvl"],
+clinicasegura\dominio\modelos.py:1:from dataclasses import dataclass
+clinicasegura\dominio\modelos.py:6:@dataclass(frozen=True)
+clinicasegura\dominio\modelos.py:11:@dataclass(frozen=True)
+clinicasegura\dominio\modelos.py:20:@dataclass(frozen=True)
+
+pytest -m etapa3 -q
+======================================================================= short test summary info =======================================================================
+FAILED pruebas/test_etapa3_abstraccion_reuso.py::test_el_dominio_declara_sus_puertos_como_protocolos - Failed: Falta el módulo «clinicasegura.dominio.puertos».
+FAILED pruebas/test_etapa3_abstraccion_reuso.py::test_los_puertos_hablan_el_idioma_del_dominio_y_no_el_del_proveedor - FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\solan\\Downloads\\Practica asincrona - Principios de diseno (estudiantes)\\practica-principios-...
+FAILED pruebas/test_etapa3_abstraccion_reuso.py::test_no_se_reinventa_lo_que_la_biblioteca_estandar_ya_resuelve - Failed: Falta el módulo «clinicasegura.aplicacion.borde».
+FAILED pruebas/test_etapa3_abstraccion_reuso.py::test_el_folio_y_el_dinero_usan_los_tipos_correctos - AssertionError: Nadie genera folios. Use uuid o secrets desde infraestructura (y random solo si lo inyecta, nunca incrustado en el dominio).
+
+python herramientas/marcador.py 3
+
+  MARCADOR DE LA PRÁCTICA · Principios de diseño
+  Abraham Solano Parrales   carné 2024132538
+  ────────────────────────────────────────────────────────────
+  Etapa 3  Abstracción y reuso                          ███████        verde
+  ────────────────────────────────────────────────────────────
+  7 pruebas en verde · 0 por resolver
+  corrida #5 registrada
+  SELLO: 27220fbcb8782e91
+  Cópielo en la entrada de BITACORA.md de la etapa que acaba de cerrar.
 ```
 
 **Explicación:**
+fallaron 4 pruebas porque faltaban puertos.py, borde.py y folios con uuid. Cree los 4 Protocol en puertos.py (Pasarela, Reloj, GeneradorFolio, Bitacora), borde.py vacio para que importe, validar_cedula con re en modelos.py y folios.py con uuid en infraestructura. Pasaron las 7 pruebas. full_name y attributes solo siguen en legado.py que ya nadie importa.
 
 **Sello:**
+`27220fbcb8782e91`
 
 ## Etapa 4 — Flexibilidad, obsolescencia y portabilidad
 

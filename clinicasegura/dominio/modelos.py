@@ -1,6 +1,13 @@
+import re
 from dataclasses import dataclass
 from datetime import datetime
 from decimal import Decimal
+
+_PATRON_CEDULA = re.compile(r"^\d-\d{4}-\d{4}$")
+
+
+def validar_cedula(valor: str) -> bool:
+    return _PATRON_CEDULA.fullmatch(valor) is not None
 
 
 @dataclass(frozen=True)
