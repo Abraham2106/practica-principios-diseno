@@ -17,16 +17,19 @@ Carné:
 ## Etapa 0 — Diagnóstico
 
 **Predicción:**
-
+El test de la etapa 0 va a pasar sin problemas porque llene la tabla de diagnostico y el analisis es correcto sobre la codebase. 
 **Observación:**
 
 ```
+pytest -m etapa0
+....                                                                                                                                                             [100%]
+4 passed, 80 deselected in 0.15s
 ```
 
 **Explicación:**
-
+Todos los tests pasaron porque rellene de manera correcta la tabla de Diagnostico 
 **Sello:**
-
+`c34d278e3bd51d6a` 
 ## Etapa 1 — Dividir y conquistar, cohesión
 
 **Predicción:**
