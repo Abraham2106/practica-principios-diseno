@@ -127,15 +127,52 @@ Al principio fallaron 3 pruebas porque no existia clinicasegura/dominio. Despues
 ## Etapa 2 — Reducir el acoplamiento
 
 **Predicción:**
+Si cambio la linea de la vigencia a 1, lo que cambia de comportamiento seria lo siguiente: se afecta el calculo de `vence` en emitir y todo lo que toque esa variable, mas alla de lo que se ve en el scope se veria afectado porque `CONFIG` es global hay mas lugares afectados. Son 4 en legado.py: la linea 66 donde se calcula vence, la 82 donde va al payload de farmauno, la 87 donde va expira en saludtotal, y la 112 donde vence vuelve en el return.
 
 **Observación:**
 
 ```
+# En PowerShell no sirve pegar Python directo; hay que entrar con: python
+
+(.venv) PS> from clinicasegura.legado import CONFIG, ServicioRecetas
+At line:1 char:1
++ from clinicasegura.legado import CONFIG, ServicioRecetas
++ ~~~~
+The 'from' keyword is not supported in this version of the language.
+
+>>> from clinicasegura.legado import CONFIG
+>>> from datetime import datetime, timedelta
+>>> CONFIG["vigencia_dias"] = 1
+>>> vence = datetime.now() + timedelta(days=CONFIG["vigencia_dias"])
+>>> print(CONFIG["vigencia_dias"])
+1
+>>> print(vence.isoformat())
+2026-09-05T23:01:54.647379
+
+pytest -m etapa2 -q
+======================================================================= short test summary info =======================================================================
+FAILED pruebas/test_etapa2_acoplamiento.py::test_la_regla_de_negocio_es_una_funcion_pura_de_firma_estrecha - Failed: Falta el módulo «clinicasegura.dominio.reglas».
+FAILED pruebas/test_etapa2_acoplamiento.py::test_la_regla_de_negocio_no_tiene_efectos_ni_depende_del_entorno - Failed: Falta el módulo «clinicasegura.dominio.reglas».
+FAILED pruebas/test_etapa2_acoplamiento.py::test_el_caso_de_uso_no_recibe_diccionarios_crudos - Failed: Falta el módulo «clinicasegura.dominio.servicio».
+
+python herramientas/marcador.py 2
+
+  MARCADOR DE LA PRÁCTICA · Principios de diseño
+  Abraham Solano Parrales   carné 2024132538
+  ────────────────────────────────────────────────────────────
+  Etapa 2  Acoplamiento                                 █████          verde
+  ────────────────────────────────────────────────────────────
+  5 pruebas en verde · 0 por resolver
+  corrida #4 registrada
+  SELLO: ba2ad594476b5705
+  Cópielo en la entrada de BITACORA.md de la etapa que acaba de cerrar.
 ```
 
 **Explicación:**
+Solo hay 1 lectura directa de CONFIG["vigencia_dias"] en legado.py .py:66, pero el acoplamiento hace que 4 lineas cambien: 66 calcula vence, 82 lo manda a farmauno, 87 a saludtotal, 112 lo devuelve al llamador. fallaron 3 pruebas porque faltaban reglas.py y servicio.py. Despues cree calcular_recargo con 3 parametros en reglas.py y EmisionDeRecetas.emitir(receta: Receta, cadena: str) en servicio.py sin globals mutables, y pasaron las 5 pruebas en verde.
 
 **Sello:**
+`ba2ad594476b5705`
 
 ## Etapa 3 — Abstracción y reuso
 
