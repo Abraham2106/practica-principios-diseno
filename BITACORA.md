@@ -341,5 +341,7 @@ Nombre dos principios que se estorbaron entre sí en SU rediseño, y con qué
 criterio resolvió el conflicto. Cite el archivo donde se ve la decisión.
 
 **Conflicto 1:**
+Principio 10 (testabilidad) vs principio 4 (abstraccion). Para probar sin red tuve que meterle reloj folios pasarelas y bitacora al constructor (servicio.py:10) y eso se siente feo porque el servicio queda muy expuesto. Lo arregle con Protocol en puertos.py:6 y el armado real en arranque.py:25 — asi inyecto cosas en pruebas pero el dominio no ve HTTP ni sqlite.
 
 **Conflicto 2:**
+Principio 11 (diseno defensivo) vs principio 7 (flexibilidad). El borde tiene que botar datos malos antes (borde.py:27 con pydantic) pero si metia ahi tambien logica de farmacias cada cadena nueva era tocar de nuevo el servicio. Separe: afuera parseo y registro pasarelas (registro.py:1), adentro el servicio solo hace .get(cadena) en servicio.py:17 sin if por farmauno.
