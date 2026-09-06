@@ -231,7 +231,7 @@ fallaron 4 pruebas porque faltaban puertos.py, borde.py y folios con uuid. Cree 
 ## Etapa 4 — Flexibilidad, obsolescencia y portabilidad
 
 **Predicción:**
-Va a fallar porque hay `if's` en el codigo aun. Como dice la desc, que si hay if's porque mi servicio aún no tiene registro / tiene NotImplementedError / menciona farmauno en un if. 
+Va a fallar porque hay `if's` en el codigo aun. Como dice la desc, que si hay if's porque mi servicio aun no tiene registro / tiene NotImplementedError / menciona farmauno en un if. 
 **Observación:**
 
 ```
@@ -265,15 +265,34 @@ Al principio fallaron 4 porque faltaban registro.py, arranque.py, el constructor
 ## Etapa 5 — Testabilidad
 
 **Predicción:**
+Predigo que el legado se va a demorar un buen rato o pegarle a la red porque emitir abre sqlite y hace post con while True. Tambien que el folio sale random y http puede salir -1 si la farmacia no responde. Para probar solo el recargo tuve que meterle a todo eso, no a una linea.
 
 **Observación:**
 
 ```
+>>> from clinicasegura.legado import ServicioRecetas
+>>> s = ServicioRecetas()
+>>> s.emitir({"cedula": "1-1234-5678", "dias": 30, "dosis_mg": 500}, "farmauno")
+{'folio': '541857', 'vence': '2026-10-05T22:14:23.764429', 'recargo': 7500, 'http': -1, 'cadena': 'farmauno'}
+
+python herramientas/marcador.py 5
+
+  MARCADOR DE LA PRÁCTICA · Principios de diseño
+  Abraham Solano Parrales   carné 2024132538
+  ────────────────────────────────────────────────────────────
+  Etapa 5  Testabilidad                                 ███████        verde
+  ────────────────────────────────────────────────────────────
+  7 pruebas en verde · 0 por resolver
+  corrida #8 registrada
+  SELLO: 9b970a6270fe479a
+  Cópielo en la entrada de BITACORA.md de la etapa que acaba de cerrar.
 ```
 
 **Explicación:**
+Paso lo que predije: http -1 porque la farmacia no respondio bien, folio random (541857) y recargo 7500 mezclado con red y sqlite. En el rediseno el servicio ya recibe pasarelas reloj folios y bitacora por constructor y la vigencia sale del reloj inyectado. Escribi 4 pruebas en mis_pruebas/ (reloj fijo, cadena caida, cedula mala, folio sin random) con ayuda de IA para el esqueleto pero las corri yo.
 
 **Sello:**
+`9b970a6270fe479a`
 
 ## Etapa 6 — Diseño defensivo
 
