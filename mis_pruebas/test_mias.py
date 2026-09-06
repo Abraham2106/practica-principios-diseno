@@ -12,6 +12,7 @@ from decimal import Decimal
 
 import pytest
 
+from clinicasegura.dominio.errores import FarmaciaNoDisponible
 from clinicasegura.dominio.modelos import Cedula, Despacho, Receta, validar_cedula
 from clinicasegura.dominio.servicio import EmisionDeRecetas
 
@@ -83,7 +84,7 @@ def test_cadena_caida():
         folios=FoliosEnOrden(),
         bitacora=BitacoraLista(),
     )
-    with pytest.raises(TimeoutError):
+    with pytest.raises(FarmaciaNoDisponible):
         servicio.emitir(_receta(), "farmauno")
 
 

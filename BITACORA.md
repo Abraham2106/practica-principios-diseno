@@ -297,15 +297,43 @@ Paso lo que predije: http -1 porque la farmacia no respondio bien, folio random 
 ## Etapa 6 — Diseño defensivo
 
 **Predicción:**
+Predigo que la primera corrida revienta con AssertionError en dias=0 porque el legado usa assert sobre datos del formulario. La segunda con python -O no corre ese assert, sigue adelante, abre sqlite, pega al post de farmauno y se queda colgado o tarda un buen rato por el while True del _post.
 
 **Observación:**
 
 ```
+python -c "from clinicasegura.legado import ServicioRecetas as S; S().emitir({'cedula':'x','dias':0,'dosis_mg':1}, 'farmauno')"
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "C:\Users\solan\Downloads\Practica asincrona - Principios de diseno (estudiantes)\practica-principios-diseno\clinicasegura\legado.py", line 62, in emitir
+    assert datos["dias"] > 0, "los dias deben ser positivos"
+AssertionError: los dias deben ser positivos
+
+python -O -c "from clinicasegura.legado import ServicioRecetas as S; S().emitir({'cedula':'x','dias':0,'dosis_mg':1}, 'farmauno')"
+(se queda colgado: sin assert pasa la validacion, intenta HTTP en bucle while True)
+
+pytest -m etapa6 -q
+...........
+11 passed
+
+python herramientas/marcador.py 6
+
+  MARCADOR DE LA PRÁCTICA · Principios de diseño
+  Abraham Solano Parrales   carné 2024132538
+  ────────────────────────────────────────────────────────────
+  Etapa 6  Diseño defensivo                             ███████████   verde
+  ────────────────────────────────────────────────────────────
+  11 pruebas en verde · 0 por resolver
+  corrida #9 registrada
+  SELLO: 73dcea8735afcdb8
+  Cópielo en la entrada de BITACORA.md de la etapa que acaba de cerrar.
 ```
 
 **Explicación:**
+Paso lo que predije, la primera revienta con AssertionError en dias=0 y la segunda con -O no corre ese assert, sigue y se cuelga un rato en el post. En el rediseno el borde parsea afuera con SolicitudReceta (pydantic, extra forbid, frozen) y a_receta devuelve Receta del dominio; si algo viene mal lanza RecetaInvalida, no assert. En servicio si la pasarela tira TimeoutError registro en bitacora y lanzo FarmaciaNoDisponible con cadena y folio para no fallar en silencio.
 
 **Sello:**
+`73dcea8735afcdb8`
 
 ## Cierre — Los principios en conflicto
 

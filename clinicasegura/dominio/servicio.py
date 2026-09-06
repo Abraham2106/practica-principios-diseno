@@ -1,6 +1,6 @@
 from datetime import timedelta
 
-from clinicasegura.dominio.errores import CadenaNoSoportada
+from clinicasegura.dominio.errores import CadenaNoSoportada, FarmaciaNoDisponible
 from clinicasegura.dominio.modelos import Despacho, Receta
 
 _VIGENCIA_DIAS = 30
@@ -19,6 +19,10 @@ class EmisionDeRecetas:
             raise CadenaNoSoportada(cadena)
         folio = self._folios.siguiente()
         vence = self._reloj.ahora() + timedelta(days=_VIGENCIA_DIAS)
-        despacho = pasarela.enviar(receta, folio, vence)
+        try:
+            despacho = pasarela.enviar(receta, folio, vence)
+        except TimeoutError as e:
+            self._bitacora.registrar("farmacia_no_disponible", folio)
+            raise FarmaciaNoDisponible(f"{cadena} / {folio}") from e
         self._bitacora.registrar("emitida", folio)
         return despacho
