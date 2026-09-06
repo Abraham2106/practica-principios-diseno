@@ -231,15 +231,36 @@ fallaron 4 pruebas porque faltaban puertos.py, borde.py y folios con uuid. Cree 
 ## Etapa 4 — Flexibilidad, obsolescencia y portabilidad
 
 **Predicción:**
-
+Va a fallar porque hay `if's` en el codigo aun. Como dice la desc, que si hay if's porque mi servicio aún no tiene registro / tiene NotImplementedError / menciona farmauno en un if. 
 **Observación:**
 
 ```
+pytest -m etapa4 -q
+=============================================================================== short test summary info ===============================================================================
+FAILED pruebas/test_etapa4_flexibilidad.py::test_se_agrega_una_cadena_nueva_sin_tocar_el_servicio - Failed: Falta el módulo «clinicasegura.infraestructura.registro».
+FAILED pruebas/test_etapa4_flexibilidad.py::test_una_cadena_desconocida_lanza_un_error_de_dominio - TypeError: EmisionDeRecetas() takes no arguments
+FAILED pruebas/test_etapa4_flexibilidad.py::test_la_configuracion_entra_por_el_entorno - Failed: Falta el módulo «clinicasegura.arranque».
+FAILED pruebas/test_etapa4_flexibilidad.py::test_existe_la_tabla_de_obsolescencia_de_dependencias - AssertionError: Filas incompletas en DEPENDENCIAS.md: pytest, pydantic,
+4 failed, 3 passed, 77 deselected in 0.43s
+
+python herramientas/marcador.py 4
+
+  MARCADOR DE LA PRÁCTICA · Principios de diseño
+  Abraham Solano Parrales   carné 2024132538
+  ────────────────────────────────────────────────────────────
+  Etapa 4  Flexibilidad · obsolescencia · portabilidad  ███████        verde
+  ────────────────────────────────────────────────────────────
+  7 pruebas en verde · 0 por resolver
+  corrida #6 registrada
+  SELLO: 64f81da5c505ccb9
+  Cópielo en la entrada de BITACORA.md de la etapa que acaba de cerrar.
 ```
 
 **Explicación:**
+Al principio fallaron 4 porque faltaban registro.py, arranque.py, el constructor de EmisionDeRecetas y DEPENDENCIAS.md vacio. Cree construir_registro en infraestructura, servicio con pasarelas/reloj/folios/bitacora sin ifs por cadena, arranque con getenv y la tabla de dependencias. Pasaron las 7 incluyendo FarmaViva sin tocar servicio.py otra vez.
 
 **Sello:**
+`64f81da5c505ccb9`
 
 ## Etapa 5 — Testabilidad
 
